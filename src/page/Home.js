@@ -36,8 +36,8 @@ const Home = () => {
   const handleSubmit = async(e) => {
     e.preventDefault()
     if(isSignInMode==='로그인'){
-      signIn(email, password)
-      navigate('/todo')
+      signIn(email, password) 
+      window.location.reload()
     }else{
       signUp(email, password)
     }
