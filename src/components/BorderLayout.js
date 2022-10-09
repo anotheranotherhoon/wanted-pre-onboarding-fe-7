@@ -14,7 +14,7 @@ const Container  = styled.div`
   justify-content: center;
   align-items: center;
   height:100vh;
-  border: 1px solid green;
+  background-color: #fbfbff;
 `
 
 export default BorderLayout
