@@ -1,11 +1,10 @@
 import {useEffect, useState} from 'react'
 import styled from 'styled-components'
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom'
 import BorderLayout from '../components/BorderLayout'
-import { signIn, signUp } from '../api/api';
+import {signIn, signUp} from '../api/api'
 
 const Home = () => {
-  const navigate = useNavigate();
   const [isSignInMode, setIsSignInMode] = useState('로그인')
   const [btnCondition, setBtnCondition] = useState(false)
   const [inputValue, setInputValue] = useState({
@@ -14,10 +13,11 @@ const Home = () => {
     rePassword: '',
   })
   const [emailValid, setEmailValid] = useState(false)
-  const [passwordValid, setPasswordValid] = useState(false);
-  const [rePasswordValid, setRePasswordValid] = useState(false);
+  const [passwordValid, setPasswordValid] = useState(false)
+  const [rePasswordValid, setRePasswordValid] = useState(false)
   const {email, password, rePassword} = inputValue
-
+  const [emailDesc, setEmailDesc] = useState('이메일은 @를 포함하셔야합니다.')
+  const [pwdDesc, setPwdDesc] = useState('비밀번호는 8글자 이상이어야 합니다.')
   const handleInput = (event) => {
     const {id, value} = event.target
     setInputValue({
@@ -33,63 +33,73 @@ const Home = () => {
     }
   }
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    if(isSignInMode==='로그인'){
-      signIn(email, password) 
-      window.location.reload()
-    }else{
+    if (isSignInMode === '로그인') {
+      signIn(email, password)
+    } else {
       signUp(email, password)
     }
   }
 
   // 유효성검사
-  const regEmail =
-  /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
+  // const regEmail =
+  //   /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i
+
+  const regEmail = /@/
   const emailValidation = () => {
     if (regEmail.test(email)) {
-      setEmailValid(true);
+      setEmailValid(true)
+      setEmailDesc('ㅤ')
     } else {
-      setEmailValid(false);
+      setEmailValid(false)
+      setEmailDesc('이메일은 @를 포함하셔야합니다.')
     }
-  };
+  }
 
   const passwordValidation = (e) => {
-    if(e.target.value.length >= 8){
+    if (e.target.value.length >= 8) {
       setPasswordValid(true)
-      return 
+      setPwdDesc('ㅤ')
+      return
     }
     setPasswordValid(false)
+    setPwdDesc('비밀번호는 8글자 이상이어야 합니다.')
     return
   }
   const rePasswordValidation = (e) => {
-    if(e.target.value===password){
+    if (e.target.value === password) {
       return setRePasswordValid(true)
     }
     return setRePasswordValid(false)
   }
-
-  useEffect(()=>{
-    if(emailValid&&passwordValid&&rePasswordValid){
-      console.log('hello')
+  useEffect(() => {
+    if (emailValid && passwordValid && rePasswordValid) {
       setBtnCondition(true)
-    }else{
+    } else {
       setBtnCondition(false)
     }
-  },[emailValid,passwordValid,rePasswordValid])
+  }, [emailValid, passwordValid, rePasswordValid])
 
   return (
     <BorderLayout>
       <FormContainer>
         {isSignInMode === '로그인' ? (
           <>
+            <h1>{isSignInMode}</h1>
             <InputWrapper>
               <label id="email">이메일</label>
               <input id="email" onChange={handleInput} required />
             </InputWrapper>
             <InputWrapper>
-              <label id="password" >비밀번호</label>
-              <input id="password"  type='password'  onChange={handleInput} autoComplete='off' required/>
+              <label id="password">비밀번호</label>
+              <input
+                id="password"
+                type="password"
+                onChange={handleInput}
+                autoComplete="off"
+                required
+              />
             </InputWrapper>
             <ChangeMode onClick={(e) => handleChangeMode(e)}>회원가입하러가기</ChangeMode>
             <SubmitBtn onClick={(e) => handleSubmit(e)}>{isSignInMode}</SubmitBtn>
@@ -98,23 +108,40 @@ const Home = () => {
           <>
             <InputWrapper>
               <label id="email">이메일</label>
-              <input id="email"  onChange={handleInput} onKeyUp={emailValidation} required/>
+              <input id="email" onChange={handleInput} onKeyUp={emailValidation} required />
+              <span>{emailDesc}</span>
             </InputWrapper>
 
             <InputWrapper>
               <label id="password">비밀번호</label>
-              <input id="password"  type='password' onChange={handleInput} onKeyUp={passwordValidation} autoComplete='off'  required/>
+              <input
+                id="password"
+                type="password"
+                onChange={handleInput}
+                onKeyUp={passwordValidation}
+                autoComplete="off"
+                required
+              />
+              <span>{pwdDesc}</span>
             </InputWrapper>
 
             <InputWrapper>
               <label id="rePassword">비밀번호확인</label>
-              <input id="rePassword"  type='password' onChange={handleInput} onKeyUp={rePasswordValidation} autoComplete='off'  required />
+              <input
+                id="rePassword"
+                type="password"
+                onChange={handleInput}
+                onKeyUp={rePasswordValidation}
+                autoComplete="off"
+                required
+              />
             </InputWrapper>
             <ChangeMode onClick={() => handleChangeMode()}>로그인하러가기</ChangeMode>
-            <SubmitBtn onClick={(e) => handleSubmit(e)} disabled={!btnCondition}>{isSignInMode}</SubmitBtn>
+            <SubmitBtn onClick={(e) => handleSubmit(e)} disabled={!btnCondition}>
+              {isSignInMode}
+            </SubmitBtn>
           </>
         )}
-        
       </FormContainer>
     </BorderLayout>
   )
@@ -125,32 +152,60 @@ const FormContainer = styled.form`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  /* border: 1px solid red; */
+  min-width: 30rem;
+  h1 {
+    font-size: 200%;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
 `
 
 const InputWrapper = styled.div`
   display: flex;
-  margin: 10px 0;
-  margin-left: auto;
+  margin-right: auto;
+  flex-direction: column;
+  width: 100%;
   label {
+    font-weight: bold;
+    font-size: 1.5rem;
     white-space: nowrap;
-    margin-right: 5%;
+    margin-bottom: 5%;
   }
   input {
-    width: 90%;
-    display: inline;
+    width: 100%;
+    margin-bottom: 5%;
+  }
+  span {
+    font-size: 1.3rem;
+    margin-bottom: 5%;
   }
 `
 
 const ChangeMode = styled.div`
   cursor: pointer;
-  background-color: red;
+  background-color: var(--color-mauve);
   width: 100%;
-  color: white;
+  color: var(--color-black);
   text-align: center;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  font-size: 150%;
+  font-weight: bold;
+  border:none;
 `
-const SubmitBtn = styled.button`
 
+const SubmitBtn = styled.div`
+  background-color: ${(props)=>props.disabled ? '#dedede' : '#0651f5'};
+  cursor : ${(props)=>props.disabled ? 'default' : 'pointer'};
+  width: 100%;
+  color: var(--color-white);
+  border:none;
+  text-align: center;
+  padding: 1rem;
+  border-radius: 1rem;
+  font-size: 150%;
+  font-weight: bold;
 `
 
 export default Home
