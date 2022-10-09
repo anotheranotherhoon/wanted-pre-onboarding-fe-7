@@ -9,6 +9,7 @@ export const signIn = async (email, password) => {
     })
     console.log(response)
     window.localStorage.setItem('token',  response.data.access_token)
+    window.location.reload()
   } catch (error) {
     console.log(error)
   }
@@ -32,7 +33,7 @@ export const createTodo = async(todo) => {
     const response = await axiosInstance.post('/todos',{
       todo
     })
-    console.log(response)
+    return response.data
   }
   catch(error){
     console.log(error)
@@ -48,5 +49,32 @@ export const getTodos = async() => {
   catch(error){
     console.log(error)
     return []
+  }
+}
+
+export const updateTodo = async(id,todo,isCompleted,userId) => {
+  try{
+    const response = await axiosInstance.put(`todos/${id}`,{
+      id,
+      todo,
+      isCompleted,
+      userId,
+    })
+    const info = response.data
+    console.log(info)
+    return info
+  }
+  catch(error){
+    console.log(error)
+  }
+}
+
+export const deleteTodo = async(id) => {
+  try{
+    const response = await axiosInstance.delete(`todos/${id}`)
+    return
+  }
+  catch(error){
+    console.log(error)
   }
 }
