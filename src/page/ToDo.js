@@ -82,7 +82,7 @@ const ToDo = () => {
             <form>
               <InputWrapper>
                 <label id="text" />
-                <input id="text" value={value} onChange={handleText}   autoFocus="true" />
+                <input id="text" value={value} onChange={handleText}   autoFocus={true} />
                 <div onClick={() => handleCreateTodo(value)}>
                   <AddBtn />
                 </div>
