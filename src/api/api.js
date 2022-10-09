@@ -72,7 +72,6 @@ export const updateTodo = async(id,todo,isCompleted,userId) => {
 export const deleteTodo = async(id) => {
   try{
     const response = await axiosInstance.delete(`todos/${id}`)
-    return
   }
   catch(error){
     console.log(error)
