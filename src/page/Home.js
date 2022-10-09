@@ -12,33 +12,46 @@ const Home = () => {
     password: '',
     rePassword: '',
   })
+  const [email, setEmail] = useState('')
+  const [password, setPassword] =useState('')
+  const [rePassword, setRePassword] = useState('')
+
   const [emailValid, setEmailValid] = useState(false)
   const [passwordValid, setPasswordValid] = useState(false)
   const [rePasswordValid, setRePasswordValid] = useState(false)
-  const {email, password, rePassword} = inputValue
+
   const [emailDesc, setEmailDesc] = useState('이메일은 @를 포함하셔야합니다.')
   const [pwdDesc, setPwdDesc] = useState('비밀번호는 8글자 이상이어야 합니다.')
-  const handleInput = (event) => {
-    const {id, value} = event.target
-    setInputValue({
-      ...inputValue,
-      [id]: value,
-    })
+
+  const handleEmail = (e) => {
+    setEmail(e.target.value)
   }
+  const handlePassword = (e) => {
+    setPassword(e.target.value)
+  }
+  const handleRePassword = (e) => {
+    setRePassword(e.target.value)
+  }
+
   const handleChangeMode = () => {
     if (isSignInMode === '로그인') {
+      setEmail('')
+      setPassword('')
       setIsSignInMode('회원가입')
     } else {
+      setEmail('')
+      setPassword('')
+      setRePassword('')
       setIsSignInMode('로그인')
     }
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
     if (isSignInMode === '로그인') {
-      signIn(email, password)
+      signIn(email, password,  handleChangeMode)
     } else {
       signUp(email, password)
+      handleChangeMode()
     }
   }
 
@@ -73,6 +86,13 @@ const Home = () => {
     }
     return setRePasswordValid(false)
   }
+  const handleEnterPress = (e) =>{
+    if(e.key === 'Enter'){
+      handleSubmit()
+    }else{
+      return
+    }
+  }
   useEffect(() => {
     if (emailValid && passwordValid && rePasswordValid) {
       setBtnCondition(true)
@@ -87,16 +107,18 @@ const Home = () => {
         {isSignInMode === '로그인' ? (
           <>
             <h1>{isSignInMode}</h1>
-            <InputWrapper>
+            <InputWrapper key='1'>
               <label id="email">이메일</label>
-              <input id="email" onChange={handleInput} required />
+              <input id="email" value={email} onChange={handleEmail} required />
             </InputWrapper>
-            <InputWrapper>
+            <InputWrapper key='2'>
               <label id="password">비밀번호</label>
               <input
                 id="password"
                 type="password"
-                onChange={handleInput}
+                value={password}
+                onChange={handlePassword}
+                onKeyDown={handleEnterPress}
                 autoComplete="off"
                 required
               />
@@ -106,18 +128,19 @@ const Home = () => {
           </>
         ) : (
           <>
-            <InputWrapper>
+            <InputWrapper key='1'>
               <label id="email">이메일</label>
-              <input id="email" onChange={handleInput} onKeyUp={emailValidation} required />
+              <input id="email" value={email} onChange={handleEmail} onKeyUp={emailValidation} required />
               <span>{emailDesc}</span>
             </InputWrapper>
 
-            <InputWrapper>
+            <InputWrapper key='2'>
               <label id="password">비밀번호</label>
               <input
                 id="password"
                 type="password"
-                onChange={handleInput}
+                value={password}
+                onChange={handlePassword}
                 onKeyUp={passwordValidation}
                 autoComplete="off"
                 required
@@ -125,12 +148,13 @@ const Home = () => {
               <span>{pwdDesc}</span>
             </InputWrapper>
 
-            <InputWrapper>
+            <InputWrapper key='3'>
               <label id="rePassword">비밀번호확인</label>
               <input
                 id="rePassword"
                 type="password"
-                onChange={handleInput}
+                value={rePassword}
+                onChange={handleRePassword}
                 onKeyUp={rePasswordValidation}
                 autoComplete="off"
                 required
@@ -147,7 +171,7 @@ const Home = () => {
   )
 }
 
-const FormContainer = styled.form`
+const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;

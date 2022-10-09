@@ -62,6 +62,14 @@ const ToDo = () => {
       setTodos(newArr)
     }
   }
+  const handleEnterPress = (e) => {
+    if(e.key === 'Enter'){
+      handleCreateTodo(value)
+      return
+    }else{
+      return
+    }
+  }
   useEffect(() => {
     getTodos().then((res) => {
       setTodos(res)
@@ -79,15 +87,13 @@ const ToDo = () => {
           </LogOut>
           </Title>
           <FormWrapper>
-            <form>
               <InputWrapper>
                 <label id="text" />
-                <input id="text" value={value} onChange={handleText}   autoFocus={true} />
+                <input id="text" value={value} onKeyDown={handleEnterPress} onChange={handleText}/>
                 <div onClick={() => handleCreateTodo(value)}>
                   <AddBtn />
                 </div>
               </InputWrapper>
-            </form>
           </FormWrapper>
         </InputContainer>
         <FilterWrapper>

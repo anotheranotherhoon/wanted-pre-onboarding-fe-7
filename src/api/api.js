@@ -21,7 +21,7 @@ export const signUp = async(email, password) =>{
       email,
       password
     })
-    console.log(response)
+    alert('회원가입에 성공했습니다!')
   }
   catch(error){
     console.log(error)
