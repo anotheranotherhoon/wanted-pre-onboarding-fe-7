@@ -1,6 +1,7 @@
 # wante 프리온보딩 프론트엔드 코스 선발과제 To Do List
 
 * [배포링크](http://todolistfe7.s3-website.ap-northeast-2.amazonaws.com/todo)
+* AWS S3로 배포하였습니다. 
 
 <p align="center">
   <br>
