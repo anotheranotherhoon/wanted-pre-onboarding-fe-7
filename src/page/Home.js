@@ -1,57 +1,42 @@
-import {useEffect, useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 import styled from 'styled-components'
-import {useNavigate} from 'react-router-dom'
 import BorderLayout from '../components/BorderLayout'
 import {signIn, signUp} from '../api/api'
 
 const Home = () => {
+  const emailInputRef = useRef()
+  const pwdInputRef = useRef()
+  const rePwdInputRef = useRef()
   const [isSignInMode, setIsSignInMode] = useState('로그인')
   const [btnCondition, setBtnCondition] = useState(false)
-  const [inputValue, setInputValue] = useState({
-    email: '',
-    password: '',
-    rePassword: '',
-  })
-  const [email, setEmail] = useState('')
-  const [password, setPassword] =useState('')
-  const [rePassword, setRePassword] = useState('')
-
   const [emailValid, setEmailValid] = useState(false)
   const [passwordValid, setPasswordValid] = useState(false)
   const [rePasswordValid, setRePasswordValid] = useState(false)
-
   const [emailDesc, setEmailDesc] = useState('이메일은 @를 포함하셔야합니다.')
   const [pwdDesc, setPwdDesc] = useState('비밀번호는 8글자 이상이어야 합니다.')
 
-  const handleEmail = (e) => {
-    setEmail(e.target.value)
-  }
-  const handlePassword = (e) => {
-    setPassword(e.target.value)
-  }
-  const handleRePassword = (e) => {
-    setRePassword(e.target.value)
-  }
-
   const handleChangeMode = () => {
     if (isSignInMode === '로그인') {
-      setEmail('')
-      setPassword('')
+      emailInputRef.current.value=''
+      pwdInputRef.current.value=''
       setIsSignInMode('회원가입')
     } else {
-      setEmail('')
-      setPassword('')
-      setRePassword('')
+      emailInputRef.current.value=''
+      pwdInputRef.current.value=''
+      rePwdInputRef.current.value=''
       setIsSignInMode('로그인')
     }
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    const email = emailInputRef.current.value;
+    const password = pwdInputRef.current.value
     if (isSignInMode === '로그인') {
-      signIn(email, password,  handleChangeMode)
+      signIn(email, password)
     } else {
-      signUp(email, password)
-      handleChangeMode()
+      signUp(email, password,handleChangeMode)
+      // handleChangeMode()
     }
   }
 
@@ -61,7 +46,7 @@ const Home = () => {
 
   const regEmail = /@/
   const emailValidation = () => {
-    if (regEmail.test(email)) {
+    if (regEmail.test(emailInputRef.current.value)) {
       setEmailValid(true)
       setEmailDesc('ㅤ')
     } else {
@@ -80,8 +65,10 @@ const Home = () => {
     setPwdDesc('비밀번호는 8글자 이상이어야 합니다.')
     return
   }
-  const rePasswordValidation = (e) => {
-    if (e.target.value === password) {
+  const rePasswordValidation = () => {
+    const password = pwdInputRef.current.value
+    const rePassword =  rePwdInputRef.current.value
+    if (rePassword=== password) {
       return setRePasswordValid(true)
     }
     return setRePasswordValid(false)
@@ -103,34 +90,33 @@ const Home = () => {
 
   return (
     <BorderLayout>
-      <FormContainer>
+      <FormContainer onSubmit={handleSubmit}>
         {isSignInMode === '로그인' ? (
           <>
             <h1>{isSignInMode}</h1>
             <InputWrapper key='1'>
               <label id="email">이메일</label>
-              <input id="email" value={email} onChange={handleEmail} required />
+              <input id="email" ref={emailInputRef} required />
             </InputWrapper>
             <InputWrapper key='2'>
               <label id="password">비밀번호</label>
               <input
                 id="password"
                 type="password"
-                value={password}
-                onChange={handlePassword}
+                ref={pwdInputRef}
                 onKeyDown={handleEnterPress}
                 autoComplete="off"
                 required
               />
             </InputWrapper>
             <ChangeMode onClick={(e) => handleChangeMode(e)}>회원가입하러가기</ChangeMode>
-            <SubmitBtn onClick={(e) => handleSubmit(e)}>{isSignInMode}</SubmitBtn>
+            <SubmitBtn >{isSignInMode}</SubmitBtn>
           </>
         ) : (
           <>
             <InputWrapper key='1'>
               <label id="email">이메일</label>
-              <input id="email" value={email} onChange={handleEmail} onKeyUp={emailValidation} required />
+              <input id="email" ref={emailInputRef} onKeyUp={emailValidation} required />
               <span>{emailDesc}</span>
             </InputWrapper>
 
@@ -139,8 +125,7 @@ const Home = () => {
               <input
                 id="password"
                 type="password"
-                value={password}
-                onChange={handlePassword}
+                ref={pwdInputRef}
                 onKeyUp={passwordValidation}
                 autoComplete="off"
                 required
@@ -153,15 +138,14 @@ const Home = () => {
               <input
                 id="rePassword"
                 type="password"
-                value={rePassword}
-                onChange={handleRePassword}
+                ref={rePwdInputRef}
                 onKeyUp={rePasswordValidation}
                 autoComplete="off"
                 required
               />
             </InputWrapper>
             <ChangeMode onClick={() => handleChangeMode()}>로그인하러가기</ChangeMode>
-            <SubmitBtn onClick={(e) => handleSubmit(e)} disabled={!btnCondition}>
+            <SubmitBtn  disabled={!btnCondition}>
               {isSignInMode}
             </SubmitBtn>
           </>
@@ -171,7 +155,7 @@ const Home = () => {
   )
 }
 
-const FormContainer = styled.div`
+const FormContainer = styled.form`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -219,7 +203,7 @@ const ChangeMode = styled.div`
   border:none;
 `
 
-const SubmitBtn = styled.div`
+const SubmitBtn = styled.button`
   background-color: ${(props)=>props.disabled ? '#dedede' : '#0651f5'};
   cursor : ${(props)=>props.disabled ? 'default' : 'pointer'};
   width: 100%;
