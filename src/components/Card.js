@@ -4,6 +4,7 @@ import {updateTodo} from '../api/api'
 import Check from './svg/Check'
 import Circle from './svg/Circle'
 import Modal from './Modal'
+import ModalAlert from './ModalAlert'
 
 const Card = ({el, handleDeleteTodo}) => {
   const [isEditMode, setIsEditMode] = useState(false)
@@ -14,6 +15,8 @@ const Card = ({el, handleDeleteTodo}) => {
   const [isCompleted, setIsCompleted] = useState(el.isCompleted)
   const [originalIsCompleted, setIsOriginalIsCompleted] = useState(el.isCompleted)
   const [userId, setuserId] = useState(el.userId)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(0)
+  const [editModalMessage, setEditModalMessage] = useState('')
 
   const editTodo = (e) => {
     setTodo(e.target.value)
@@ -29,20 +32,21 @@ const Card = ({el, handleDeleteTodo}) => {
     setIsModalOpen(true)
   }
   const modalClose = () => {
+    setIsEditModalOpen(0)
     setIsModalOpen(false)
   }
   const handleUpdateTodo = () => {
-    if (window.confirm('수정하겠습니까')) {
-      updateTodo(id, todo, isCompleted, userId).then((res) => {
-        window.location.reload()
-      })
-      setIsEditMode(false)
-    }
+    updateTodo(id, todo, isCompleted, userId).then((res) => {
+      window.location.reload()
+    })
   }
   const handleComplete = () => {
-    console.log('hello')
-    console.log(isCompleted)
     setIsCompleted(!isCompleted)
+  }
+
+  const handleEditModalOpen = (option, message) => {
+    setEditModalMessage(message)
+    setIsEditModalOpen(option)
   }
   return (
     <Layout isCompleted={isCompleted} isEditMode={isEditMode}>
@@ -51,7 +55,7 @@ const Card = ({el, handleDeleteTodo}) => {
       <EventWrapper>
         {isEditMode ? (
           <>
-            <Edit className="leftOne" onClick={() => handleUpdateTodo()}>
+            <Edit className="leftOne" onClick={() => handleEditModalOpen(1, '제출하시겠습니까?')}>
               제출
             </Edit>
             <Edit onClick={() => handleCancelEditMode()}>취소</Edit>
@@ -61,7 +65,7 @@ const Card = ({el, handleDeleteTodo}) => {
             <Edit className="leftOne" onClick={() => handleEditBtn()}>
               수정
             </Edit>
-            <Edit onClick={() => handleDeleteTodo(id)}>삭제</Edit>
+            <Edit onClick={() => handleEditModalOpen(2,'정말 삭제하시겠습니까?')}>삭제</Edit>
           </>
         )}
         {isModalOpen && (
@@ -74,6 +78,9 @@ const Card = ({el, handleDeleteTodo}) => {
             handleComplete={handleComplete}
           />
         )}
+        {/* 1=== 제출 , 2 === 삭제 */}
+        {isEditModalOpen === 1 ? <ModalAlert leftBtnClick={()=>handleUpdateTodo()} leftBtnMessage='네'  rightBtnClick={modalClose} rightBtnMessage='아니오'>{editModalMessage}</ModalAlert> :<></>}
+        {isEditModalOpen === 2? <ModalAlert leftBtnClick={()=>handleDeleteTodo(id)}  leftBtnMessage='네' rightBtnClick={modalClose} rightBtnMessage='아니오'>{editModalMessage}</ModalAlert> :<></>}
       </EventWrapper>
     </Layout>
   )

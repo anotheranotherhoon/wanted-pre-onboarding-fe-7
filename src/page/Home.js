@@ -31,19 +31,21 @@ const Home = () => {
     }
   }
 
-  const hadleModal = (message)  => {
+  const hadleModalOpen = (message)  => {
     setModalMessage(message)
     setIsModalOpen(true)
   }
-
+  const handleModalClose = () => {
+    setIsModalOpen(false)
+  }
   const handleSubmit = (event) => {
     event.preventDefault()
     const email = emailInputRef.current.value;
     const password = pwdInputRef.current.value
     if (isSignInMode === '로그인') {
-      signIn(email, password, hadleModal)
+      signIn(email, password, hadleModalOpen)
     } else {
-      signUp(email, password,handleChangeMode, hadleModal)
+      signUp(email, password,handleChangeMode, hadleModalOpen)
     }
   }
 
@@ -159,7 +161,7 @@ const Home = () => {
           </>
         )}
       </FormContainer>
-      {isModalOpen ? <ModalAlert setIsModalOpen={setIsModalOpen}>{modalMessage}</ModalAlert> : <></>}
+      {isModalOpen ? <ModalAlert rightBtnClick={handleModalClose} rightBtnMessage='확인'>{modalMessage}</ModalAlert> : <></>}
     </BorderLayout>
   )
 }

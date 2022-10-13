@@ -5,46 +5,55 @@ import BorderLayout from '../components/BorderLayout'
 import Card from '../components/Card'
 import AddBtn from '../components/svg/AddBtn'
 import {deleteTodo} from '../api/api'
+import ModalAlert from '../components/ModalAlert'
+import Modal from '../components/Modal'
 
 const ToDo = () => {
   const [value, setValue] = useState('')
   const [todos, setTodos] = useState([])
   const [originalTodos, setOriginalTodos] = useState([])
   const [filterState, setFilterState] = useState(1)
+  const [isModalOpen, setIsModalOpen] = useState(0)
+  const [modalMessage, setModalMessage] = useState('')
   const handleText = (event) => {
     setValue(event.target.value)
   }
-  const handleCreateTodo = (todo) => {
+
+const handleCreate = (todo) => {
+  createTodo(todo).then((res) => {
+    const newArr = todos
+    newArr.push(res)
+    setTodos([...newArr])
+    setOriginalTodos([...newArr])
+    setValue('')
+    handleModalClose()
+  })
+}
+
+  const handleCreateModalOpen = (todo) => {
     if(todo){
-      if (window.confirm('할 일을 추가하시겠습니까?')) {
-        createTodo(todo).then((res) => {
-          const newArr = todos
-          newArr.push(res)
-          setTodos([...newArr])
-          setOriginalTodos([...newArr])
-          setValue('')
-        })
-      }
+      handleModalOpen(3, '할일을 추가하시겠습니까?')
     }else{
-      alert('할 일을 입력해주세요!')
+      handleModalOpen(2, '할일을 입력해주세요!')
     }
   }
   const handleDeleteTodo = (id) => {
-    if (window.confirm('정말 삭제하시겠습니까?')) {
-      deleteTodo(id)
-      const newArr = originalTodos.filter((el) => el.id !== id)
-      setTodos(newArr)
-      setOriginalTodos(newArr)
-    }
-    return
+    deleteTodo(id)
+    const newArr = originalTodos.filter((el) => el.id !== id)
+    setTodos(newArr)
+    setOriginalTodos(newArr)
   }
 
   const handleLogOut = ()=> {
-    if(window.confirm('로그아웃 하시겠습니까?')){
-      window.localStorage.removeItem('token')
-      window.location.reload()
-      return 
-    }
+    window.localStorage.removeItem('token')
+    window.location.reload()
+  }
+  const handleModalOpen = (option, message) => {
+    setModalMessage(message)
+    setIsModalOpen(option)
+  }
+  const handleModalClose = () => {
+    setIsModalOpen(0)
   }
   const handleFilter = (e) => {
     if(e===1){
@@ -64,7 +73,7 @@ const ToDo = () => {
   }
   const handleEnterPress = (e) => {
     if(e.key === 'Enter'){
-      handleCreateTodo(value)
+      handleCreateModalOpen(value)
       return
     }else{
       return
@@ -73,7 +82,7 @@ const ToDo = () => {
   useEffect(() => {
     getTodos().then((res) => {
       setTodos(res)
-      setOriginalTodos(res)
+      setOriginalTodos(res) 
     })
   }, [])
   return (
@@ -83,14 +92,18 @@ const ToDo = () => {
           <Title>
             <h1>To Do List</h1>
             <LogOut>
-            <span onClick={()=>handleLogOut()}>로그아웃</span>
+            <span className='btnName' onClick={()=>handleModalOpen(1,'로그아웃 하시겠습니까?')}>로그아웃</span>
+            {/* 0은 모달 끌때, 1 === 로그아웃, 2 === 할 일 을 입력안하고 + 버튼을 눌렀을 때*/}
+            {isModalOpen === 1 ? <ModalAlert leftBtnClick={handleLogOut} leftBtnMessage='네' rightBtnClick={handleModalClose} rightBtnMessage='아니오' >{modalMessage}</ModalAlert> :<></>}
+            {isModalOpen === 2  ? <ModalAlert rightBtnClick={handleModalClose} rightBtnMessage='확인' >{modalMessage}</ModalAlert> : <></>}
+            {isModalOpen === 3 ? <ModalAlert leftBtnClick={()=>handleCreate(value)} leftBtnMessage='네'  rightBtnClick={handleModalClose} rightBtnMessage='아니오' >{modalMessage}</ModalAlert> : <></>}
           </LogOut>
           </Title>
           <FormWrapper>
               <InputWrapper>
                 <label id="text" />
                 <input id="text" value={value} onKeyDown={handleEnterPress} onChange={handleText}/>
-                <div onClick={() => handleCreateTodo(value)}>
+                <div onClick={() => handleCreateModalOpen(value)}>
                   <AddBtn />
                 </div>
               </InputWrapper>
@@ -154,7 +167,7 @@ const CardLayout = styled.div`
 `
 const LogOut = styled.div`
   text-align: end;
-  span {
+  .btnName {
     cursor: pointer;
     font-size: 25%;
     background-color: var(--color-blue );
