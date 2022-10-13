@@ -2,6 +2,7 @@ import {useEffect, useRef, useState} from 'react'
 import styled from 'styled-components'
 import BorderLayout from '../components/BorderLayout'
 import {signIn, signUp} from '../api/api'
+import ModalAlert from '../components/ModalAlert'
 
 const Home = () => {
   const emailInputRef = useRef()
@@ -14,6 +15,8 @@ const Home = () => {
   const [rePasswordValid, setRePasswordValid] = useState(false)
   const [emailDesc, setEmailDesc] = useState('이메일은 @를 포함하셔야합니다.')
   const [pwdDesc, setPwdDesc] = useState('비밀번호는 8글자 이상이어야 합니다.')
+  const [isModalOpen, setIsModalOpen] = useState(true)
+  const [modalMessage, setModalMessage] = useState('반갑습니다.')
 
   const handleChangeMode = () => {
     if (isSignInMode === '로그인') {
@@ -151,6 +154,7 @@ const Home = () => {
           </>
         )}
       </FormContainer>
+      {isModalOpen ? <ModalAlert setIsModalOpen={setIsModalOpen}>{modalMessage}</ModalAlert> : <></>}
     </BorderLayout>
   )
 }
