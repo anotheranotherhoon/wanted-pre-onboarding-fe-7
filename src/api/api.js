@@ -15,13 +15,14 @@ export const signIn = async (email, password) => {
   }
 }
 
-export const signUp = async(email, password) =>{
+export const signUp = async(email, password, handleChangeMode) =>{
   try{
     const response = await axiosInstance.post('/auth/signup',{
       email,
       password
     })
     alert('회원가입에 성공했습니다!')
+    handleChangeMode()
   }
   catch(error){
     console.log(error)
@@ -43,8 +44,7 @@ export const createTodo = async(todo) => {
 export const getTodos = async() => {
   try{
     const response = await axiosInstance.get('/todos')
-    const todos = response.data
-    return todos
+    return response.data
   }
   catch(error){
     console.log(error)
@@ -60,9 +60,7 @@ export const updateTodo = async(id,todo,isCompleted,userId) => {
       isCompleted,
       userId,
     })
-    const info = response.data
-    console.log(info)
-    return info
+    return response.data
   }
   catch(error){
     console.log(error)
