@@ -5,7 +5,7 @@ const ModalAlert = (props) => {
   const modalRef = useRef(null)
   const cllickBackground = (e) => {
     if (modalRef.current === e.target) {
-      props.setIsModalOpen(false)
+      props.rightBtnClick()
     }
   }
 
@@ -14,13 +14,17 @@ const ModalAlert = (props) => {
       <Background ref={modalRef} onClick={cllickBackground} />
       <ModalBlock>
         <span>{props.children}</span>
-        <OkBtn onClick={()=>props.setIsModalOpen()}>확인</OkBtn>
+        <Btn className='yes' onClick={()=>props.leftBtnClick()}>{props.leftBtnMessage}</Btn>
+        <Btn  className='cancel' onClick={()=>props.rightBtnClick()}>{props.rightBtnMessage}</Btn>
       </ModalBlock>
     </Container>
   )
 }
 const Container = styled.div`
   position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 100%;
   height: 100%;
   z-index: 100;
@@ -28,11 +32,13 @@ const Container = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 `
 const Background = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align:center;
+  margin: auto;
   position: fixed;
   width: 100%;
   height: 100%;
@@ -79,16 +85,23 @@ const ModalBlock = styled.div`
   }
 `
 
-const OkBtn = styled.div`
+const Btn = styled.div`
   position: absolute;
   bottom: 1rem;
   padding: 1rem;
   color:var(--color-white);
   transition: all ease 0.2s 0.2s;
   cursor: pointer;
+  &.yes{
+  right: 9rem;
+  background-color: var(--color-blue);
+  border-radius: 2rem;
+  }
+  &.cancel{
   right: 1rem;
   background-color: var(--color-blue);
   border-radius: 2rem;
+  }
 `
 
 export default ModalAlert
