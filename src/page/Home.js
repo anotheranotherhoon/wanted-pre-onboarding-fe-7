@@ -15,7 +15,7 @@ const Home = () => {
   const [rePasswordValid, setRePasswordValid] = useState(false)
   const [emailDesc, setEmailDesc] = useState('이메일은 @를 포함하셔야합니다.')
   const [pwdDesc, setPwdDesc] = useState('비밀번호는 8글자 이상이어야 합니다.')
-  const [isModalOpen, setIsModalOpen] = useState(true)
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const [modalMessage, setModalMessage] = useState('반갑습니다.')
 
   const handleChangeMode = () => {
@@ -31,15 +31,19 @@ const Home = () => {
     }
   }
 
+  const hadleModal = (message)  => {
+    setModalMessage(message)
+    setIsModalOpen(true)
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault()
     const email = emailInputRef.current.value;
     const password = pwdInputRef.current.value
     if (isSignInMode === '로그인') {
-      signIn(email, password)
+      signIn(email, password, hadleModal)
     } else {
-      signUp(email, password,handleChangeMode)
-      // handleChangeMode()
+      signUp(email, password,handleChangeMode, hadleModal)
     }
   }
 
@@ -91,6 +95,7 @@ const Home = () => {
     }
   }, [emailValid, passwordValid, rePasswordValid])
 
+
   return (
     <BorderLayout>
       <FormContainer onSubmit={handleSubmit}>
@@ -112,7 +117,7 @@ const Home = () => {
                 required
               />
             </InputWrapper>
-            <ChangeMode onClick={(e) => handleChangeMode(e)}>회원가입하러가기</ChangeMode>
+            <ChangeMode type='button' onClick={(e) => handleChangeMode(e)}>회원가입하러가기</ChangeMode>
             <SubmitBtn >{isSignInMode}</SubmitBtn>
           </>
         ) : (
@@ -147,8 +152,8 @@ const Home = () => {
                 required
               />
             </InputWrapper>
-            <ChangeMode onClick={() => handleChangeMode()}>로그인하러가기</ChangeMode>
-            <SubmitBtn  disabled={!btnCondition}>
+            <ChangeMode type='button' onClick={() => handleChangeMode()}>로그인하러가기</ChangeMode>
+            <SubmitBtn disabled={!btnCondition}>
               {isSignInMode}
             </SubmitBtn>
           </>
@@ -193,7 +198,7 @@ const InputWrapper = styled.div`
   }
 `
 
-const ChangeMode = styled.div`
+const ChangeMode = styled.button`
   cursor: pointer;
   background-color: var(--color-mauve);
   width: 100%;
