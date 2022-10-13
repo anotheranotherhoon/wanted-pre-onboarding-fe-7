@@ -4,7 +4,6 @@ import ToDo from './page/ToDo'
 
 const Router = () => {
   const isLoggedIn = localStorage.getItem('token') || null;
-  console.log(isLoggedIn)
   return (
     <Routes>
       {isLoggedIn ? (
