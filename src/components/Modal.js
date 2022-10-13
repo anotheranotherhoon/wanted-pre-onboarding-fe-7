@@ -70,7 +70,7 @@ const ModalBlock = styled.div`
         width: 80%;
     }
     min-height: 18rem;
-    animation: modal-show 1s;
+    animation: modal-show 0.3s;
     @keyframes modal-show {
         from {
             opacity: 0;
