@@ -29,6 +29,24 @@ wanted 프리온보딩 프론트엔드 코스 선발과제
 
 <br>
 
+## 프로젝트 실행방법
+
+```
+REACT_APP_URL= https://pre-onboarding-selection-task.shop
+```
+
+2. 아래 명령어로 의존성 패키지들을 설치합니다.
+
+```
+$ npm install
+```
+
+3. 아래 명령어로 실행시킵니다.
+
+```
+$ npm start
+```
+
 ## 요구 사항 수행
 - [x]  과제의 소스코드는 본인의 GitHub 레파지토리에 Public으로 올려주세요. 레파지토리 이름은 wanted-pre-onboarding-fe-7로 생성해주세요.
 - [x]  Create React App을 이용해 과제를 구현해주세요.

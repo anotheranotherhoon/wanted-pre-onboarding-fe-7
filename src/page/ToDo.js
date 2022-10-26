@@ -1,4 +1,4 @@
-import {useEffect, useId, useState} from 'react'
+import {useEffect, useState} from 'react'
 import styled from 'styled-components'
 import {createTodo, getTodos} from '../api/api'
 import BorderLayout from '../components/BorderLayout'
@@ -6,7 +6,6 @@ import Card from '../components/Card'
 import AddBtn from '../components/svg/AddBtn'
 import {deleteTodo} from '../api/api'
 import ModalAlert from '../components/ModalAlert'
-import Modal from '../components/Modal'
 
 const ToDo = () => {
   const [value, setValue] = useState('')
